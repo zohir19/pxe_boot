@@ -19,3 +19,12 @@ TFTP_DIRECTORY="/srv/tftp"
 TFTP_ADDRESS="0.0.0.0:69"
 TFTP_OPTIONS="--secure --create --listen"
 ```
+Create the TFTP_DIRECTORY 
+``` bash
+mkdir -p /srv/tftp
+cd /srv/tftp
+```
+copy the pxelinux.0 to the tftp directory if not found you can download the syslinux package.
+``` bash
+cp /usr/lib/syslinux/modules/bios/pxelinux.0 .
+```
