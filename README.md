@@ -32,15 +32,12 @@ host node21 {
 }
 ```
  ## TFTP
- ## NFS
+Install the tftpd and modify it's config file
  ```bash
-apt install tftpd-hpa nfs-kernel-server
-apt install syslinux-common
-apt install debootstrap
-
+apt install tftpd-hpa 
+vim /etc/default/tftpd-hpa
 ```
- ## configuration
-modify the /etc/default/tftpd-hpa as follows:
+
 ```
 # /etc/default/tftpd-hpa
 
@@ -49,6 +46,9 @@ TFTP_DIRECTORY="/srv/tftp"
 TFTP_ADDRESS="0.0.0.0:69"
 TFTP_OPTIONS="--secure --create --listen"
 ```
+#### configuration
+modify the /etc/default/tftpd-hpa as follows:
+
 Create the TFTP_DIRECTORY 
 ``` bash
 mkdir -p /srv/tftp
@@ -68,3 +68,7 @@ tar xvf syslinux-6.03.tar.xz
 cp syslinux-6.03/bios/core/pxelinux.0 /srv/tftp/
 cp /usr/lib/syslinux/modules/bios/ldlinux.c32 /srv/tftp/
 ```
+ ## NFS
+ apt install syslinux-common
+apt install debootstrap
+nfs-kernel-server
