@@ -7,6 +7,8 @@
  ``` bash
 apt-get install isc-dhcp-server
 vim /etc/dhcp/dhcpd.conf
+```
+```bash
 allow booting;
 allow bootp;
 
