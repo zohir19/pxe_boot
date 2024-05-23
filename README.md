@@ -46,8 +46,7 @@ TFTP_DIRECTORY="/srv/tftp"
 TFTP_ADDRESS="0.0.0.0:69"
 TFTP_OPTIONS="--secure --create --listen"
 ```
-#### configuration
-modify the /etc/default/tftpd-hpa as follows:
+
 
 Create the TFTP_DIRECTORY 
 ``` bash
