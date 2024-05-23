@@ -3,8 +3,14 @@
 
  ## Introduction
  ## Installation
- apt install tftpd-hpa nfs-kernel-server
- apt install syslinux-common
- apt install debootstrap
- apt-get install isc-dhcp-server
+ ```bash
+root@head-node:~# apt install tftpd-hpa nfs-kernel-server
+```
+  ```bash
+root@head-node:~# apt install syslinux-common
+``` ```bash
+root@head-node:~# apt install debootstrap
+``` ```bash
+root@head-node:~# apt-get install isc-dhcp-server
+```
  ## configuration
