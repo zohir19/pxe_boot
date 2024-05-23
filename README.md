@@ -2,12 +2,40 @@
  booting ubuntu 22.04 from pxe
 
  ## Introduction
- ## Installation
+ ## DHCP
+ Install dhcp and modify it's configuration file as follows:
+ ``` bash
+apt-get install isc-dhcp-server
+vim /etc/dhcp/dhcpd.conf
+allow booting;
+allow bootp;
+
+subnet 192.168.56.0 netmask 255.255.255.0 {
+        range 192.168.56.122 192.168.56.125;
+        option domain-name "example.com";
+        option domain-name-servers 8.8.8.8, 8.8.4.4;
+        option broadcast-address 192.168.56.255;
+        option routers 192.168.56.1;
+        next-server 192.168.56.121;
+        option subnet-mask 255.255.255.0;
+
+        filename "/pxelinux.0";
+}
+
+# force the client to this ip for pxe.
+# This isn't strictly necessary but forces each computer to always have the same IP address
+host node21 {
+        hardware ethernet 01:23:45:a8:50:26;
+        fixed-address 192.168.56.122;
+}
+```
+ ## TFTP
+ ## NFS
  ```bash
 apt install tftpd-hpa nfs-kernel-server
 apt install syslinux-common
 apt install debootstrap
-apt-get install isc-dhcp-server
+
 ```
  ## configuration
 modify the /etc/default/tftpd-hpa as follows:
