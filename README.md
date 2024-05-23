@@ -6,11 +6,12 @@
  ```bash
 root@head-node:~# apt install tftpd-hpa nfs-kernel-server
 ```
-  ```bash
+```bash
 root@head-node:~# apt install syslinux-common
-``` ```bash
+``` 
+```bash
 root@head-node:~# apt install debootstrap
-``` ```bash
+
 root@head-node:~# apt-get install isc-dhcp-server
 ```
  ## configuration
