@@ -30,7 +30,7 @@ cp /boot/vmlinuz-$(uname -r) /srv/tftp/
 cp /boot/initrd.img-$(uname -r) /srv/tftp/
 cp /usr/lib/syslinux/modules/bios/pxelinux.0 .
 ```
-### if the pxelinux.0 deosn't exist
+#### if the pxelinux.0 deosn't exist
 download the syslinux package and then copy the pxelinux.0 to the tftp directory
 ``` bash
 wget https://mirrors.edge.kernel.org/pub/linux/utils/boot/syslinux/6.xx/syslinux-6.03.tar.xz
