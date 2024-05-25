@@ -82,6 +82,7 @@ IPAPPEND 2
 ```
 ## Creating the worker node filesystem
 ```bash
+apt install debootstrap
 mkdir /clusternfs
 debootstrap jammy /clusternfs/
 cp -a /lib/modules /clusternfs/lib/
@@ -89,9 +90,14 @@ cp -a /lib/modules /clusternfs/lib/
  ## NFS
  Install the required packages
  ```bash
-apt install debootstrap nfs-kernel-server
+apt install nfs-kernel-server
 ```
 Modify the /etc/exports file 
 ```
 /clusternfs 192.168.56.0/24(rw,sync,no_root_squash,no_subtree_check)
+```
+Edit the /clusternfs/etc/fstab file
+```
+proc            /proc         proc   defaults       0      0
+/dev/nfs        /             nfs    defaults       0      0
 ```
