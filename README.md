@@ -67,6 +67,25 @@ tar xvf syslinux-6.03.tar.xz
 cp syslinux-6.03/bios/core/pxelinux.0 /srv/tftp/
 cp /usr/lib/syslinux/modules/bios/ldlinux.c32 /srv/tftp/
 ```
+Create the default file and modify it
+```bash
+mkdir /srv/tftp/pxelinux.cfg
+vim /srv/tftp/pxelinux.cfg/default
+```
+
+```
+DEFAULT linux
+LABEL linux
+KERNEL vmlinuz-5.15.0-107-generic
+APPEND root=/dev/nfs initrd=initrd.img-5.15.0-107-generic nfsroot=192.168.56.121:/clusternfs,ro ip=dhcp ro
+IPAPPEND 2
+```
+## Creating the worker node filesystem
+```bash
+mkdir /clusternfs
+debootstrap jammy /clusternfs/
+cp -a /lib/modules /clusternfs/lib/
+```
  ## NFS
  apt install syslinux-common
 apt install debootstrap
