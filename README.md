@@ -34,7 +34,7 @@ host node21 {
  ## TFTP
 Install the tftpd and modify it's config file
  ```bash
-apt install tftpd-hpa 
+apt install tftpd-hpa syslinux-common
 vim /etc/default/tftpd-hpa
 ```
 
@@ -87,6 +87,11 @@ debootstrap jammy /clusternfs/
 cp -a /lib/modules /clusternfs/lib/
 ```
  ## NFS
- apt install syslinux-common
-apt install debootstrap
-nfs-kernel-server
+ Install the required packages
+ ```bash
+apt install debootstrap nfs-kernel-server
+```
+Modify the /etc/exports file 
+```
+/clusternfs 192.168.56.0/24(rw,sync,no_root_squash,no_subtree_check)
+```
