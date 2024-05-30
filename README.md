@@ -29,6 +29,7 @@ subnet 192.168.56.0 netmask 255.255.255.0 {
 host node21 {
         hardware ethernet 01:23:45:a8:50:26;
         fixed-address 192.168.56.122;
+        option host-name "node1";
 }
 ```
 Set the proper interface
@@ -42,7 +43,7 @@ INTERFACESv4="enp0s3"
  ## TFTP
 Install the tftpd and modify it's config file
  ```bash
-apt install tftpd-hpa syslinux-common
+apt install tftpd-hpa syslinux-common pxelinux
 vim /etc/default/tftpd-hpa
 ```
 
