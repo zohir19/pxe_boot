@@ -5,7 +5,7 @@
  ## DHCP
  Install dhcp and modify it's configuration file as follows:
  ``` bash
-apt-get install isc-dhcp-server
+apt install isc-dhcp-server -y
 vim /etc/dhcp/dhcpd.conf
 ```
 ```bash
@@ -66,7 +66,7 @@ Copy the configuration files to the tftp directory .
 ``` bash
 cp /boot/vmlinuz-$(uname -r) /srv/tftp/vmlinuz
 cp /boot/initrd.img-$(uname -r) /srv/tftp/initrd.img
-cp /usr/lib/syslinux/modules/bios/pxelinux.0 .
+cp /usr/lib/PXELINUX/pxelinux.0 .
 ```
 #### if the pxelinux.0 deosn't exist
 download the syslinux package and then copy the pxelinux.0 to the tftp directory
