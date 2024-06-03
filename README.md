@@ -26,7 +26,7 @@ subnet 192.168.56.0 netmask 255.255.255.0 {
 
 # force the client to this ip for pxe.
 # This isn't strictly necessary but forces each computer to always have the same IP address
-host node21 {
+host node1 {
         hardware ethernet 01:23:45:a8:50:26;
         fixed-address 192.168.56.122;
         option host-name "node1";
@@ -67,14 +67,6 @@ Copy the configuration files to the tftp directory .
 cp /boot/vmlinuz-$(uname -r) /srv/tftp/vmlinuz
 cp /boot/initrd.img-$(uname -r) /srv/tftp/initrd.img
 cp /usr/lib/PXELINUX/pxelinux.0 .
-```
-#### if the pxelinux.0 deosn't exist
-download the syslinux package and then copy the pxelinux.0 to the tftp directory
-``` bash
-wget https://mirrors.edge.kernel.org/pub/linux/utils/boot/syslinux/6.xx/syslinux-6.03.tar.xz
-tar xvf syslinux-6.03.tar.xz
-cp syslinux-6.03/bios/core/pxelinux.0 /srv/tftp/
-cp /usr/lib/syslinux/modules/bios/ldlinux.c32 /srv/tftp/
 ```
 Create the default file and modify it
 ```bash
