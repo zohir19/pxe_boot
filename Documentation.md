@@ -28,6 +28,8 @@ copy the kernel and the initrd to the tftp directory
 ```bash
 cp /srv/nfs/jammy/boot/vmlinuz /srv/tftp/jammy/vmlinuz
 cp /srv/nfs/jammy/boot/initrd.img /srv/tftp/jammy/initrd.img
+chown -R tftp:tftp /srv/tftp
+chmod -R 755 /srv/tftp
 ```
 modify the nfs exports
 ```bash
@@ -44,4 +46,9 @@ copy the contents of grub/grub.cfg to your server and copy the required modules
 ``` bash
 vim /srv/tftp/grub/grub.cfg
 cp -r /boot/grub/x86_64-efi/ /srv/tftp/grub/
+```
+## restart the services
+```bash
+systemctl restart dnsmasq
+systemctl restart nfs-kernel-server
 ```
