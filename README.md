@@ -1,5 +1,5 @@
 # pxe_boot
- booting ubuntu 22.04 from pxe
+ booting ubuntu 22.04 from pxe OLD CONF
 
  ## Introduction
  ## DHCP
@@ -57,7 +57,7 @@ TFTP_OPTIONS="--secure --create --listen"
 ```
 
 
-Create the TFTP_DIRECTORY 
+Create the TFTP_DIRECTORY
 ``` bash
 mkdir -p /srv/tftp
 cd /srv/tftp
@@ -109,7 +109,7 @@ cp /clusternfs/boot/initrd.img-... /srv/tftp/initrd.img
  ```bash
 apt install nfs-kernel-server
 ```
-Modify the /etc/exports file 
+Modify the /etc/exports file
 ```
 /clusternfs 192.168.56.0/24(rw,sync,no_root_squash,no_subtree_check)
 ```
@@ -120,7 +120,7 @@ proc            /proc         proc   defaults       0      0
 ```
 
 ## Launching the PXE
-```bash 
+```bash
 systemctl restart isc-dhcp-server
 systemctl restart nfs-kernel-server
 ```
