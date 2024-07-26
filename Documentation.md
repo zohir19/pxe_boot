@@ -1,13 +1,10 @@
 <div align="center" style="text-align: center">
+<a href="http://hpcme.com">
 <img src="http://hpcme.com/wp-content/uploads/2021/10/cropped-Logo-HPCME-Systems-72x50.jpg" alt="HPCME logo"/>
+</a>
 <h3>HPCME Systems</h3>
 <p>
   :bar_chart: Path to a free self-taught education in <strong>Data Science</strong>!
-</p>
-<p>
-  <a href="https://github.com/open-source-society/data-science">
-    <img alt="Open Source Society University - Data Science" src="https://img.shields.io/badge/OSSU-data--science-blue.svg">
-  </a>
 </p>
 </div>
 
