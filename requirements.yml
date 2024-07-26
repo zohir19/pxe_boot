@@ -1,0 +1,6 @@
+dnsmasq
+nfs-kernel-server
+debootstrap
+vim
+grub-efi-amd64-signed
+shim-signed
