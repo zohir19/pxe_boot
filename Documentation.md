@@ -34,7 +34,14 @@ modify the nfs exports
 vim /etc/exports
 ```
 ```bash
-
+/srv/nfs/jammy *(rw,sync,no_subtree_check,no_root_squash)
+```
 ## grub configurations
 ```bash
 mkdir -p /srv/tftp/grub
+```
+copy the contents of grub/grub.cfg to your server and copy the required modules
+``` bash
+vim /srv/tftp/grub/grub.cfg
+cp -r /boot/grub/x86_64-efi/ /srv/tftp/grub/
+```
