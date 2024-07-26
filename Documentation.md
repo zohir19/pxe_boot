@@ -1,6 +1,6 @@
 <div align="center" style="text-align: center">
-<img src="http://hpcme.com/wp-content/uploads/2021/10/cropped-Logo-HPCME-Systems-72x50.jpg" alt="Open Source Society logo"/>
-<h3>Open Source Society University</h3>
+<img src="http://hpcme.com/wp-content/uploads/2021/10/cropped-Logo-HPCME-Systems-72x50.jpg" alt="HPCME logo"/>
+<h3>HPCME Systems</h3>
 <p>
   :bar_chart: Path to a free self-taught education in <strong>Data Science</strong>!
 </p>
