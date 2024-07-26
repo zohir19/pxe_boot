@@ -14,19 +14,26 @@ copy the contents of dnsmasq.d/01-test.hosts to your server
 ```bash
 vim /etc/dnsmasq.d/01-test.hosts
 ```
-```bash
 copy the required files to tftp directory
+```bash
 cp /usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed /srv/tftp/
 cp /usr/lib/shim/shimx64.efi.signed /srv/tftp/
 ```
 ## create the worker node filesystem
-debootstrap jammy /srv/nfs/jammy
+create the filesystem with debootstrap
 ```bash
-#copy the kernel and the initrd to the tftp directory
+debootstrap jammy /srv/nfs/jammy
+```
+copy the kernel and the initrd to the tftp directory
+```bash
 cp /srv/nfs/jammy/boot/vmlinuz /srv/tftp/jammy/vmlinuz
 cp /srv/nfs/jammy/boot/initrd.img /srv/tftp/jammy/initrd.img
-#modify the nfs exports
+```
+modify the nfs exports
+```bash
 vim /etc/exports
+```
+```bash
 
 ## grub configurations
 ```bash
