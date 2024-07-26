@@ -1,3 +1,16 @@
+<div align="center" style="text-align: center">
+<img src="http://hpcme.com/wp-content/uploads/2021/10/cropped-Logo-HPCME-Systems-72x50.jpg" alt="Open Source Society logo"/>
+<h3>Open Source Society University</h3>
+<p>
+  :bar_chart: Path to a free self-taught education in <strong>Data Science</strong>!
+</p>
+<p>
+  <a href="https://github.com/open-source-society/data-science">
+    <img alt="Open Source Society University - Data Science" src="https://img.shields.io/badge/OSSU-data--science-blue.svg">
+  </a>
+</p>
+</div>
+
 # pxe_boot
  booting ubuntu 22.04 from pxe with dnsmasq
 ## Install the required packages
