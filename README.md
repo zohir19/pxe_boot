@@ -1,126 +1,62 @@
+<div align="center" style="text-align: center">
+<a href="http://hpcme.com">
+<img src="http://hpcme.com/wp-content/uploads/2021/10/cropped-Logo-HPCME-Systems-72x50.jpg" alt="HPCME logo"/>
+</a>
+<h3>HPCME Systems</h3>
+
+</div>
+
 # pxe_boot
- booting ubuntu 22.04 from pxe OLD CONF
-
- ## Introduction
- ## DHCP
- Install dhcp and modify it's configuration file as follows:
- ``` bash
-apt install isc-dhcp-server -y
-vim /etc/dhcp/dhcpd.conf
-```
+ booting ubuntu 22.04 from pxe with dnsmasq
+## Install the required packages
+you can find all the required packages under requirements.yml
+## create the tftp directory and modify the dnsmasq configurations
 ```bash
-allow booting;
-allow bootp;
-
-subnet 192.168.56.0 netmask 255.255.255.0 {
-        range 192.168.56.122 192.168.56.125;
-        option domain-name "example.com";
-        option domain-name-servers 8.8.8.8, 8.8.4.4;
-        option broadcast-address 192.168.56.255;
-        option routers 192.168.56.1;
-        next-server 192.168.56.121;
-        option subnet-mask 255.255.255.0;
-
-        filename "/pxelinux.0";
-}
-
-# force the client to this ip for pxe.
-# This isn't strictly necessary but forces each computer to always have the same IP address
-host node1 {
-        hardware ethernet 01:23:45:a8:50:26;
-        fixed-address 192.168.56.122;
-        option host-name "node1";
-}
-```
-Set the proper interface
-```bash
-vim /etc/default/isc-dhcp-server
-```
-
-```
-INTERFACESv4="enp0s3"
-```
- ## TFTP
-Install the tftpd and modify it's config file
- ```bash
-apt install tftpd-hpa syslinux-common pxelinux
-vim /etc/default/tftpd-hpa
-```
-
-```
-# /etc/default/tftpd-hpa
-
-TFTP_USERNAME="tftp"
-TFTP_DIRECTORY="/srv/tftp"
-TFTP_ADDRESS="0.0.0.0:69"
-TFTP_OPTIONS="--secure --create --listen"
-```
-
-
-Create the TFTP_DIRECTORY
-``` bash
 mkdir -p /srv/tftp
-cd /srv/tftp
 ```
-Copy the configuration files to the tftp directory .
+copy the contents of dnsmasq.d/00-header.conf to your server
+```bash
+vim /etc/dnsmasq.d/00-header.conf
+```
+copy the contents of dnsmasq.d/01-test.hosts to your server
+```bash
+vim /etc/dnsmasq.d/01-test.hosts
+```
+copy the required files to tftp directory
+```bash
+cp /usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed /srv/tftp/
+cp /usr/lib/shim/shimx64.efi.signed /srv/tftp/
+```
+## create the worker node filesystem
+create the filesystem with debootstrap
+```bash
+debootstrap jammy /srv/nfs/jammy
+```
+copy the kernel and the initrd to the tftp directory
+```bash
+cp /srv/nfs/jammy/boot/vmlinuz /srv/tftp/jammy/vmlinuz
+cp /srv/nfs/jammy/boot/initrd.img /srv/tftp/jammy/initrd.img
+chown -R tftp:tftp /srv/tftp
+chmod -R 755 /srv/tftp
+```
+modify the nfs exports
+```bash
+vim /etc/exports
+```
+```bash
+/srv/nfs/jammy *(rw,sync,no_subtree_check,no_root_squash)
+```
+## grub configurations
+```bash
+mkdir -p /srv/tftp/grub
+```
+copy the contents of grub/grub.cfg to your server and copy the required modules
 ``` bash
-cp /boot/vmlinuz-$(uname -r) /srv/tftp/vmlinuz
-cp /boot/initrd.img-$(uname -r) /srv/tftp/initrd.img
-cp /usr/lib/PXELINUX/pxelinux.0 .
+vim /srv/tftp/grub/grub.cfg
+cp -r /boot/grub/x86_64-efi/ /srv/tftp/grub/
 ```
-Create the default file and modify it
+## restart the services
 ```bash
-mkdir /srv/tftp/pxelinux.cfg
-vim /srv/tftp/pxelinux.cfg/default
-```
-
-```
-DEFAULT linux
-LABEL linux
-KERNEL vmlinuz
-APPEND root=/dev/nfs initrd=initrd.img nfsroot=192.168.56.121:/clusternfs,ro ip=dhcp ro
-IPAPPEND 2
-```
-## Creating the worker node filesystem
-```bash
-apt install debootstrap
-mkdir /clusternfs
-debootstrap jammy /clusternfs/
-cp -a /lib/modules /clusternfs/lib/
-mount --bind /dev /clusternfs/dev
-chroot /clusternfs
-# Set up fstab
-echo "proc /proc proc defaults 0 0" > /etc/fstab
-
-# Set up the network interface
-echo "auto eth0
-iface eth0 inet dhcp" > /etc/network/interfaces
-
-# Install necessary packages
-apt update
-apt install -y linux-image-generic initramfs-tools
-exit
-# copy the kernel and initramfs to the TFTP directory:
-cp /clusternfs/boot/vmlinuz-... /srv/tftp/vmlinuz
-cp /clusternfs/boot/initrd.img-... /srv/tftp/initrd.img
-```
- ## NFS
- Install the required packages
- ```bash
-apt install nfs-kernel-server
-```
-Modify the /etc/exports file
-```
-/clusternfs 192.168.56.0/24(rw,sync,no_root_squash,no_subtree_check)
-```
-Edit the /clusternfs/etc/fstab file
-```
-proc            /proc         proc   defaults       0      0
-/dev/nfs        /             nfs    defaults       0      0
-```
-
-## Launching the PXE
-```bash
-systemctl restart isc-dhcp-server
+systemctl restart dnsmasq
 systemctl restart nfs-kernel-server
 ```
