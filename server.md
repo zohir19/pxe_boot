@@ -3,10 +3,10 @@
 <img src="http://hpcme.com/wp-content/uploads/2021/10/cropped-Logo-HPCME-Systems-72x50.jpg" alt="HPCME logo"/>
 </a>
 <h3>HPCME Systems</h3>
-# Server side configurations
+
 </div>
 
-
+# Server side configurations
 After perfornming the below steps you should be able to boot a basic linux image (jammy) through serving the filesystem using nfs.
 ## Install the required packages
 you can find all the required packages under requirements.yml
@@ -30,6 +30,7 @@ cp /usr/lib/shim/shimx64.efi.signed /srv/tftp/
 ## create the worker node filesystem
 create the filesystem with debootstrap
 ```bash
+mkdir /srv/nfs
 debootstrap jammy /srv/nfs/jammy
 ```
 copy the kernel and the initrd to the tftp directory
