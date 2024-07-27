@@ -8,3 +8,14 @@
 
 # Client side configurations
 Now it's time to customize the image
+## Accessing the image
+Mount the filesystem
+```bash
+mount --bind /dev /srv/nfs/jammy/dev
+mount --bind /proc/ /srv/nfs/jammy/proc/
+mount --bind /sys /srv/nfs/jammy/sys
+```
+Access the image
+```bash
+chroot /srv/nfs/jammy/
+```
