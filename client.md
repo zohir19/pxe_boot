@@ -19,3 +19,15 @@ Access the image
 ```bash
 chroot /srv/nfs/jammy/
 ```
+# Install the required packages
+Update and install the following packages
+```bash
+apt update
+apt install linux-image-generic
+apt install vim
+apt install parted
+apt install dosfstools
+apt install rsync
+apt install nfs-common
+apt install grub-pc-lib
+apt install grub-pc-bin
