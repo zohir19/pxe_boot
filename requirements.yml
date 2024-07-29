@@ -1,6 +1,14 @@
-dnsmasq
-nfs-kernel-server
-debootstrap
-vim
-grub-efi-amd64-signed
-shim-signed
+---
+packages:
+  - name: dnsmasq
+    version: "2.90"
+  - name: nfs-kernel-server
+    version: "1:2.6.1-1ubuntu1.2"
+  - name: debootstrap
+    version: "1.0.126+nmu1ubuntu0.7"
+  - name: vim
+    version: latest
+  - name: grub-efi-amd64-signed
+    version: latest
+  - name: shim-signed
+    version: latest
