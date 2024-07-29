@@ -44,3 +44,5 @@ Copy the contents of the initial_setup.sh and initial_setup.service
 exit #to exit from the chroot
 cp initial_setup.sh /srv/nfs/jammy/usr/local/bin
 cp initial_setup.service /srv/nfs/jammy/etc/systemd/system
+systemctl enable initial_setup.service
+```
