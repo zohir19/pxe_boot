@@ -33,8 +33,14 @@ apt install nfs-common
 apt install grub-pc-lib
 apt install grub-pc-bin
 ```
-# Create the root user password or another management user
+# Modify the image and set the initial layout
+Create the password for the root user or create another management user:
 ```bash
 chroot /srv/nfs/jammy
 passwd
 ```
+Copy the contents of the initial_setup.sh and initial_setup.service
+```bash
+exit #to exit from the chroot
+cp initial_setup.sh /srv/nfs/jammy/usr/local/bin
+cp initial_setup.service /srv/nfs/jammy/etc/systemd/system
