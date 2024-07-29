@@ -1,27 +1,39 @@
 #!/bin/sh
 
+# Identify the smallest disk
+DISK=$(lsblk -b -o NAME,SIZE,TYPE | grep "disk" | sort -k 2 -n | head -n 1 | awk '{print $1}')
+PART_PREFIX="/dev/${DISK}"
+
 # Partition the disk
-echo -n "creating partitions..."
-parted -s /dev/sda mklabel gpt
-parted -s -a opt /dev/sda mkpart ESP fat32 1MiB 512MiB
-parted -s /dev/sda set 1 boot on
-parted -s -a opt /dev/sda mkpart primary ext4 512MiB 100%
-echo "done."
+echo -n "Creating partitions..."
+parted -s $PART_PREFIX mklabel gpt
+parted -s -a opt $PART_PREFIX mkpart ESP fat32 1MiB 512MiB
+parted -s $PART_PREFIX set 1 boot on
+parted -s -a opt $PART_PREFIX mkpart primary ext4 512MiB 100%
+echo "Done."
 
-echo -n "formatting..."
+echo -n "Formatting..."
 # Format partitions
-mkfs.vfat -F32 /dev/sda1
-mkfs.ext4 /dev/sda2
-echo "done."
+if [[ $DISK == nvme* ]]; then
+  EFI_PART="${PART_PREFIX}p1"
+  ROOT_PART="${PART_PREFIX}p2"
+else
+  EFI_PART="${PART_PREFIX}1"
+  ROOT_PART="${PART_PREFIX}2"
+fi
 
-echo -n "mounting FS..."
+mkfs.vfat -F32 $EFI_PART
+mkfs.ext4 $ROOT_PART
+echo "Done."
+
+echo -n "Mounting filesystems..."
 # Mount NFS root and new partitions
 mkdir -p /mnt/nfs-root
-mount -t nfs 192.168.0.1:/srv/nfs/jammy /mnt/nfs-root #change the IP so it matches your server
-mount /dev/sda2 /mnt/new-root-partition
+mount -t nfs 192.168.0.1:/srv/nfs/jammy /mnt/nfs-root # Change the IP to match your server
+mount $ROOT_PART /mnt/new-root-partition
 mkdir -p /mnt/new-root-partition/boot/efi
-mount /dev/sda1 /mnt/new-root-partition/boot/efi
-echo "done."
+mount $EFI_PART /mnt/new-root-partition/boot/efi
+echo "Done."
 
 echo -n "copying fs..."
 # Copy NFS root to new partition
