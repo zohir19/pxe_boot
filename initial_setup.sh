@@ -61,7 +61,8 @@ chroot /mnt/new-root-partition /bin/bash -c "grub-mkdevicemap && grub-mkconfig -
 echo "done"
 
 chroot /mnt/new-root-partition /bin/bash -c "systemctl disable install.service"
-
+grub-mkconfig -o /boot/grub/grub.cfg
+grub-mkconfig -o /boot/efi/EFI/GRUB/grub.cfg
 echo -n "unmounting..."
 # Clean up
 #umount /mnt/new-root-partition/dev
@@ -72,4 +73,4 @@ echo -n "unmounting..."
 #umount /mnt/new-root-partition
 echo "done"
 
-# reboot
+reboot
