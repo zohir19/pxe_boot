@@ -17,12 +17,12 @@ mount --bind /sys /srv/nfs/jammy/sys
 ```
 Access the image
 ```bash
+cp /etc/apt/sources.list /srv/nfs/jammy/etc/apt/sources.list
 chroot /srv/nfs/jammy/
 ```
 # Install the required packages
 Update and install the following packages
 ```bash
-cp /etc/apt/sources.list /srv/nfs/jammy/etc/apt/sources.list
 apt update
 apt install linux-image-generic
 apt install vim
