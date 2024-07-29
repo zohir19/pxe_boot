@@ -22,6 +22,7 @@ chroot /srv/nfs/jammy/
 # Install the required packages
 Update and install the following packages
 ```bash
+cp /etc/apt/sources.list /srv/nfs/jammy/etc/apt/sources.list
 apt update
 apt install linux-image-generic
 apt install vim
@@ -31,3 +32,9 @@ apt install rsync
 apt install nfs-common
 apt install grub-pc-lib
 apt install grub-pc-bin
+```
+# Create the root user password or another management user
+```bash
+chroot /srv/nfs/jammy
+passwd
+```
