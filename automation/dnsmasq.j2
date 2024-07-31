@@ -1,0 +1,7 @@
+port=0
+dhcp-hostsfile=/etc/dnsmasq.d/01-test.hosts
+interface={{ interface }}                # Use the appropriate network interface
+dhcp-range={{ dhcp_start }},{{ dhcp_end }},12h
+dhcp-boot=grubnetx64.efi.signed,linuxhint-s20, {{ server_ip }}
+enable-tftp
+tftp-root={{ tftp_root }}
