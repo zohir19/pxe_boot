@@ -24,3 +24,4 @@
     template:
       src: hosts.j2
       dest: "/etc/dnsmasq.d/01-test.hosts"
+to be modify
