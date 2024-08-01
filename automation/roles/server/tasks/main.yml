@@ -1,2 +1,6 @@
 ---
-# tasks file for server
+- name: include the first play
+  include_tasks: first_task.yml
+
+- name: include the second play
+  include_tasks: second_task.yml
