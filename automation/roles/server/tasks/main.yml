@@ -1,6 +1,8 @@
 ---
-- name: include the first play
+- name: include the first task
   include_tasks: first_task.yml
 
-- name: include the second play
+- name: include the second task
   include_tasks: second_task.yml
+- name: include the third task
+  include_tasks: third_task.yml
