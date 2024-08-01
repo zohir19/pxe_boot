@@ -1,9 +1,9 @@
 ---
 - name: install the required files
-    apt:
-      name: "{{ item.name }}"
-      state: present
-    loop: "{{ packages }}"
+  apt:
+    name: "{{ item.name }}"
+    state: present
+  loop: "{{ packages }}"
 - name: create the tftp directory
   file:
     path: "{{ item.path }}"
@@ -12,11 +12,8 @@
   loop: "{{ directories }}"
 - name: copy grubnetx64.efi.signed
   copy:
-    src:
-    dest: /srv/tftp/
-    mode: '0755'
-- name: copy shimx64.efi.signed
-  copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: '0755'
+  loop: "{{ copyfiles }}"
+  when: item.priority == 1
