@@ -1,19 +1,5 @@
 ---
-- name: set up the server
-  hosts: localhost
-  become: true
-  vars_prompt:
-    - name: "MAC"
-      prompt: "Enter the device MAC address"
-      private: no
-    - name: "hostname"
-      prompt: "Enter the hostname"
-      private: no
-    - name: "IP"
-      prompt: "Enter the host IP"
-      private: no
-  tasks:
-  - name: Writing the prompt to hosts
-    template:
-      src: dhcp_hosts.j2
-      dest: "/etc/dnsmasq.d/01-test.hosts"
+- name: Writing the prompt to hosts
+  template:
+    src: dhcp_hosts.j2
+    dest: "/etc/dnsmasq.d/01-test.hosts"
