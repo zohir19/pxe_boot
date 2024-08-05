@@ -1,0 +1,9 @@
+---
+  - name: chroot config
+    hosts: chroots
+    become: yes
+    tasks:
+      - name: testing
+        apt:
+          name: "*"
+          state: latest

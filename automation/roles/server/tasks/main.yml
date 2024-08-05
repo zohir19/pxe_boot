@@ -8,3 +8,5 @@
   include_tasks: dhcp_hosts.yml
 - name: include the workerfs
   include_tasks: workerfs.yml
+- name: include the chroot
+  include_tasks: chroot.yml
