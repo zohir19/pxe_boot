@@ -29,3 +29,9 @@
     - name: "IP"
       prompt: "Enter the host IP"
       private: no
+- name: setting the chroots
+  hosts: chroots
+  become: yes
+  roles:
+    - role: server
+      tasks_from: chroot.yml
