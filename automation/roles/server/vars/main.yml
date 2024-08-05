@@ -1,2 +1,38 @@
 ---
-# vars file for server
+directories:
+  - path: "/srv/tftp"
+    mode: "0775"
+  - path: "/srv/nfs"
+    mode: "0775"
+  - path: "/srv/tftp/grub"
+    mode: "0775"
+copyfiles:
+  - src: "/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed"
+    name: "grubnetx64.efi.signed"
+    dest: "/srv/tftp"
+    priority: 1
+  - src: "/usr/lib/shim/shimx64.efi.signed"
+    name: "shimx64.efi.signed"
+    dest: "/srv/tftp"
+    priority: 1
+  - src: "/srv/nfs/jammy/boot/vmlinuz"
+    name: "vmlinuz"
+    dest: "/srv/tftp/jammy/vmlinuz"
+    priority: 2
+  - src: "/srv/nfs/jammy/boot/initrd.img"
+    name: "initrd.img"
+    dest: "/srv/tftp/jammy/initrd.img"
+    priority: 2
+packages:
+  - name: dnsmasq
+    version: "2.90"
+  - name: nfs-kernel-server
+    version: "1:2.6.1-1ubuntu1.2"
+  - name: debootstrap
+    version: "1.0.126+nmu1ubuntu0.7"
+  - name: vim
+    version: latest
+  - name: grub-efi-amd64-signed
+    version: latest
+  - name: shim-signed
+    version: latest
