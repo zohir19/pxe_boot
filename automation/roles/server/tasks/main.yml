@@ -1,6 +1,6 @@
 ---
 - name: include the first task
-  include_tasks: first_task.yml
+  include_tasks: install_packages.yml
 
 - name: include the second task
   include_tasks: second_task.yml
