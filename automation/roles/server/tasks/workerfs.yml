@@ -16,3 +16,4 @@
   template:
     src: grub.j2
     dest: "/srv/tftp/grub/grub.cfg"
+  notify: restart services

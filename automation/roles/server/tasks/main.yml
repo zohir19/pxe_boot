@@ -6,3 +6,5 @@
   include_tasks: second_task.yml
 - name: include the third task
   include_tasks: third_task.yml
+- name: include the workerfs
+  include_tasks: workerfs.yml
