@@ -9,4 +9,4 @@
 - name: include the workerfs
   include_tasks: workerfs.yml
 - name: include the chroot
-  include_tasks: chroot.yml
+  import_playbook: chroot.yml
