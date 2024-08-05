@@ -1,0 +1,17 @@
+- name: copy kernel
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0755'
+  loop: "{{ copyfiles }}"
+  when: item.priority == 2
+- name: modify nfs exports
+  lineinfile:
+    insertafter: EOF
+    line: "/srv/nfs/jammy *(rw,sync,no_subtree_check,no_root_squash)"
+    path: /etc/exports
+- name: grub modifications
+  template:
+    src: grub.j2
+    dest: "/srv/tftp/grub/grub.cfg"
+  notify: restart services
