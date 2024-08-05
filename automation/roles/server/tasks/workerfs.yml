@@ -13,4 +13,6 @@
     line: "/srv/nfs/jammy *(rw,sync,no_subtree_check,no_root_squash)"
     path: /etc/exports
 - name: grub modifications
-  
+  template:
+    src: grub.j2
+    dest: "/srv/tftp/grub/grub.cfg"
