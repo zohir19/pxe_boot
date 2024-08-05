@@ -1,0 +1,14 @@
+set timeout=5
+timeout_style=menu
+#debug=all
+set net_default_server=192.168.0.1
+
+menuentry 'DB overlay' {
+    linux /jammy/vmlinuz root=/dev/nfs nfsroot=192.168.0.1:/srv/nfs/db_overlay rw BOOTIF=01-$net_default_mac BOOTIP=$net_default_ip console=tty0 console=ttyS0,115200 earlyprintk=ttyS0,115200
+    initrd /jammy/initrd.img
+}
+
+menuentry 'Ubuntu 22.04' {
+    linux /jammy/vmlinuz root=/dev/nfs nfsroot=192.168.0.1:/srv/nfs/jammy rw BOOTIF=01-$net_default_mac BOOTIP=$net_default_ip console=tty0 console=ttyS0,115200 earlyprintk=ttyS0,115200
+    initrd /jammy/initrd.img
+}
