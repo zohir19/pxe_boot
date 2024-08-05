@@ -1,5 +1,5 @@
 - name: creating the worker filesystem
-  shell: debootstrap jammy /nfs/jammy
+  shell: debootstrap jammy /srv/nfs/jammy
 - name: copy kernel
   copy:
     src: "{{ item.src }}"

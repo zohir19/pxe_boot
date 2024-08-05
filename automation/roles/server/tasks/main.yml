@@ -3,8 +3,8 @@
   include_tasks: install_packages.yml
 
 - name: include the second task
-  include_tasks: second_task.yml
+  include_tasks: dnsmasq.yml
 - name: include the third task
-  include_tasks: third_task.yml
+  include_tasks: dhcp_hosts.yml
 - name: include the workerfs
   include_tasks: workerfs.yml
