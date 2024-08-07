@@ -36,3 +36,30 @@ packages:
     version: latest
   - name: shim-signed
     version: latest
+  - name: *
+    version: latest
+    tag: chroot
+  - name: linux-image-generic
+    version: latest
+    tag: chroot
+  - name: vim
+    version: latest
+    tag: chroot
+  - name: parted
+    version: latest
+    tag: chroot
+  - name: dosfstools
+    version: latest
+    tag: chroot
+  - name: rsync
+    version: latest
+    tag: chroot
+  - name: nfs-common
+    version: latest
+    tag: chroot
+  - name: grub-pc-bin
+    version: latest
+    tag: chroot
+  - name: grub-pc-lib
+    version: latest
+    tag: chroot
