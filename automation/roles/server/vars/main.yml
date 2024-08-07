@@ -23,49 +23,35 @@ copyfiles:
     name: "initrd.img"
     dest: "/srv/tftp/jammy/initrd.img"
     priority: 2
-packages:
+packages_base:
   - name: dnsmasq
     version: "2.90"
-    tagged: "baseOS"
   - name: nfs-kernel-server
     version: "1:2.6.1-1ubuntu1.2"
-    tagged: "baseOS"
   - name: debootstrap
     version: "1.0.126+nmu1ubuntu0.7"
-    tagged: "baseOS"
   - name: vim
     version: latest
-    tagged: "baseOS"
   - name: grub-efi-amd64-signed
     version: latest
-    tagged: "baseOS"
   - name: shim-signed
     version: latest
-    tagged: "baseOS"
-  - name: *
+packages_chroot:
+  - name: "*"
     version: latest
-    tag: chroot
   - name: linux-image-generic
     version: latest
-    tag: chroot
   - name: vim
     version: latest
-    tag: chroot
   - name: parted
     version: latest
-    tag: chroot
   - name: dosfstools
     version: latest
-    tag: chroot
   - name: rsync
     version: latest
-    tag: chroot
   - name: nfs-common
     version: latest
-    tag: chroot
   - name: grub-pc-bin
     version: latest
-    tag: chroot
   - name: grub-pc-lib
     version: latest
-    tag: chroot
