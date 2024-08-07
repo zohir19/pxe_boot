@@ -3,3 +3,7 @@
     name: "{{ item.name }}"
     state: latest
   loop: "{{ packages_chroot }}"
+- name: modifying the root passwd
+  user:
+    name: root
+    password: "{{ 'init12' | password_hash('sha512') }}"
