@@ -1,2 +1,2 @@
 [chroots]
-/srv/nfs/jammy
+/srv/nfs/jammy ansible_connection=chroot
