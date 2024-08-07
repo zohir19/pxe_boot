@@ -2,5 +2,4 @@
   apt:
     name: "{{ item.name }}"
     state: latest
-  loop: "{{ packages }}"
-  when: item.tag == "chroot"
+  loop: "{{ packages_chroot }}"
