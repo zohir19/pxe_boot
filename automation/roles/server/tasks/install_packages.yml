@@ -3,8 +3,7 @@
   apt:
     name: "{{ item.name }}"
     state: present
-  loop: "{{ packages }}"
-  when: item.tagged == "baseOS"
+  loop: "{{ packages_base }}"
 - name: create the tftp directory
   file:
     path: "{{ item.path }}"
