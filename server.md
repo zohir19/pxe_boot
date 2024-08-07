@@ -33,13 +33,6 @@ create the filesystem with debootstrap
 mkdir /srv/nfs
 debootstrap jammy /srv/nfs/jammy
 ```
-copy the kernel and the initrd to the tftp directory
-```bash
-cp /srv/nfs/jammy/boot/vmlinuz /srv/tftp/jammy/vmlinuz
-cp /srv/nfs/jammy/boot/initrd.img /srv/tftp/jammy/initrd.img
-#chown -R tftp:tftp /srv/tftp
-#chmod -R 755 /srv/tftp
-```
 modify the nfs exports
 ```bash
 vim /etc/exports
