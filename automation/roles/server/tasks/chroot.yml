@@ -1,4 +1,6 @@
-- name: testing
+- name: updating the fresh image packages
   apt:
-    name: "*"
+    name: "{{ item.name }}"
     state: latest
+  loop: "{{ packages }}"
+  when: item.tag == "chroot"
