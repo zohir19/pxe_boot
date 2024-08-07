@@ -4,6 +4,7 @@
     name: "{{ item.name }}"
     state: present
   loop: "{{ packages }}"
+  when: item.tagged == "baseOS"
 - name: create the tftp directory
   file:
     path: "{{ item.path }}"
