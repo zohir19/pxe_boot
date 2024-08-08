@@ -1,14 +1,42 @@
 #!/bin/#!/usr/bin/env bash
 mkdir -p /srv/tftp
-vim /etc/dnsmasq.d/00-header.conf
-vim /etc/dnsmasq.d/01-test.hosts
+cat <<EOF >> /etc/dnsmasq.d/00-header.conf
+port=0
+dhcp-hostsfile=/etc/dnsmasq.d/01-test.hosts
+interface=enp107s0                # Use the appropriate network interface
+dhcp-range=192.168.0.100,192.168.0.150,12h
+dhcp-boot=grubnetx64.efi.signed,linuxhint-s20,192.168.0.1
+enable-tftp
+tftp-root=/srv/tftp
+EOF
+
+cat <<EOF >> /etc/dnsmasq.d/01-test.hosts
+dhcp-host=3c:ec:ef:7b:b4:94,client1,192.168.0.121,3600
+dhcp-host=3c:ec:ef:7b:b3:68,client2,192.168.0.122,3600
+dhcp-host=3c:ec:ef:7b:b3:48,client3,192.168.0.123,3600
+EOF
 cp /usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed /srv/tftp/
 cp /usr/lib/shim/shimx64.efi.signed /srv/tftp
 mkdir /srv/nfs
 debootstrap jammy /srv/nfs/jammy
 echo "/srv/nfs/jammy *(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports
 mkdir -p /srv/tftp/grub
-vim /srv/tftp/grub/grub.cfg
+cat <<EOF >> /srv/tftp/grub/grub.cfg
+set timeout=5
+timeout_style=menu
+#debug=all
+set net_default_server=192.168.0.1
+
+menuentry 'DB overlay' {
+    linux /jammy/vmlinuz root=/dev/nfs nfsroot=192.168.0.1:/srv/nfs/db_overlay rw BOOTIF=01-$net_default_mac BOOTIP=$net_default_ip console=tty0 console=ttyS0,115200 earlyprintk=ttyS0,115200
+    initrd /jammy/initrd.img
+}
+
+menuentry 'Ubuntu 22.04' {
+    linux /jammy/vmlinuz root=/dev/nfs nfsroot=192.168.0.1:/srv/nfs/jammy rw BOOTIF=01-$net_default_mac BOOTIP=$net_default_ip console=tty0 console=ttyS1,115200 earlyprintk=ttyS1,115200
+    initrd /jammy/initrd.img
+}
+EOF
 cp -r /boot/grub/x86_64-efi/ /srv/tftp/grub/
 systemctl restart dnsmasq
 systemctl restart nfs-kernel-server
