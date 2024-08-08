@@ -53,3 +53,4 @@ cp initial_setup.sh /srv/nfs/jammy/usr/local/bin
 cp initial_setup.service /srv/nfs/jammy/etc/systemd/system
 systemctl enable initial_setup.service
 ```
+# Start your machine and boot from PXE
