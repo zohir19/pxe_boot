@@ -43,7 +43,22 @@ systemctl restart nfs-kernel-server
 mount --bind /dev /srv/nfs/jammy/dev
 mount --bind /proc/ /srv/nfs/jammy/proc/
 mount --bind /sys /srv/nfs/jammy/sys
-cp /etc/apt/sources.list /srv/nfs/jammy/etc/apt/sources.list
+cat <<EOF >> /srv/nfs/jammy/etc/apt/sources.list
+deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse
+# deb-src http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse
+
+deb http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe multiverse
+# deb-src http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe multiverse
+
+deb http://archive.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
+# deb-src http://archive.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
+
+deb http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse
+# deb-src http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse
+
+deb http://archive.canonical.com/ubuntu/ jammy partner
+# deb-src http://archive.canonical.com/ubuntu/ jammy partner
+EOF
 cp initial_setup.sh /srv/nfs/jammy/usr/local/bin
 cp initial_setup.service /srv/nfs/jammy/etc/systemd/system
 chroot /srv/nfs/jammy/
