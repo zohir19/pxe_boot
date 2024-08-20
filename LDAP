@@ -4,3 +4,24 @@ apt -y install ldap-account-manager
 
 
 set the full hostname in /etc/hosts when typing hostname -f it should give you  the FQDN
+
+slapcat to check that the LDAP has the correct domain and cn=admin
+
+a2enconf php*-cgi
+systemctl reload apache2
+systemctl enable apache2
+
+
+
+10.127.104.32/lam
+
+
+
+------- client
+add the server to /etc/hosts
+apt install libnss-ldap libpam-ldap ldap-utils nscd -y
+vim /etc/nsswitch.conf
+vim /etc/pam.d/common-password
+vim /etc/pam.d/common-session
+systemctl restart nscd.service
+systemctl enable nscd.service
