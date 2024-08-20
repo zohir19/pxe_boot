@@ -10,4 +10,3 @@ c = Connection(s, user='cn=admin,dc=hpcme,dc=com', password='init12')
 # perform the Bind operation
 if not c.bind():
     print('error in bind', c.result)
-~
