@@ -10,12 +10,13 @@ slapcat to check that the LDAP has the correct domain and cn=admin
 a2enconf php*-cgi
 systemctl reload apache2
 systemctl enable apache2
+pip install ldap3
 
 
 
 10.127.104.32/lam
 
-
+for user password use slappasswd
 
 ------- client
 add the server to /etc/hosts

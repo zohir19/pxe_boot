@@ -1,0 +1,11 @@
+dn: cn=mmekias,ou=ACC,ou=Department,dc=hpcme,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: mmekias
+sn: mmekias
+uid: mmekias
+uidNumber: 10004
+gidNumber: 10004
+homeDirectory: /home/mmekias
+loginShell: /bin/bash
+userPassword: {SSHA}uKLeGOHu8mxpefm3DFAhh/Q0tUscPHdX
