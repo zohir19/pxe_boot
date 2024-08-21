@@ -1,0 +1,8 @@
+{
+    "dn": "cn=mmekias,ou=ACC,ou=Department,dc=hpcme,dc=com",
+    "attributes": {
+        "cn": "newmmekias",
+        "homeDirectory": "/home/newmmekias",
+        "loginShell": "/bin/zsh"
+    }
+}
