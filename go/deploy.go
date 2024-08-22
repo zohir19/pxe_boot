@@ -3,6 +3,7 @@ package main
 import (
         "bufio"
         "fmt"
+        "io"
         "log"
         "os"
         "os/exec"
@@ -11,10 +12,7 @@ import (
 // InstallPackages installs a list of packages using apt-get
 func InstallPackages(packages []string) error {
         for _, pkg := range packages {
-                // Construct the install command
                 cmd := exec.Command("sudo", "apt", "install", "-y", pkg)
-
-                // Run the command and capture the output
                 output, err := cmd.CombinedOutput()
                 if err != nil {
                         return fmt.Errorf("failed to install package %s: %v\nOutput: %s", pkg, err, output)
@@ -38,17 +36,13 @@ func createDirectories(dirs []string) error {
 
 // addHost appends a DHCP host entry to the /etc/dnsmasq.d/01-test.hosts file
 func addHost(mac string, hostname string, ip string) error {
-        // Open the file in append mode
         confFile, err := os.OpenFile("/etc/dnsmasq.d/01-test.hosts", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
         if err != nil {
                 return fmt.Errorf("failed to open file: %v", err)
         }
         defer confFile.Close()
 
-        // Format the dhcp-host entry
         entry := fmt.Sprintf("dhcp-host=%s,%s,%s,3600\n", mac, hostname, ip)
-
-        // Write the entry to the file
         _, err = confFile.WriteString(entry)
         if err != nil {
                 return fmt.Errorf("failed to write to file: %v", err)
@@ -58,9 +52,49 @@ func addHost(mac string, hostname string, ip string) error {
         return nil
 }
 
+// copyFile copies a single file from src to dst
+func copyFile(src, dst string) error {
+        sourceFile, err := os.Open(src)
+        if err != nil {
+                return fmt.Errorf("failed to open source file: %v", err)
+        }
+        defer sourceFile.Close()
+
+        destFile, err := os.Create(dst)
+        if err != nil {
+                return fmt.Errorf("failed to create destination file: %v", err)
+        }
+        defer destFile.Close()
+
+        _, err = io.Copy(destFile, sourceFile)
+        if err != nil {
+                return fmt.Errorf("failed to copy file from %s to %s: %v", src, dst, err)
+        }
+
+        fmt.Printf("Successfully copied file from %s to %s\n", src, dst)
+        return nil
+}
+
+// copyFiles copies multiple files from predefined source to destination paths
+func copyFiles() error {
+        fileCopies := map[string]string{
+                "/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed": "/srv/tftp/grubnetx64.efi.signed",
+                "/usr/lib/shim/shimx64.efi.signed": "/srv/tftp/shimx64.efi.signed",
+        }
+
+        for src, dst := range fileCopies {
+                err := copyFile(src, dst)
+                if err != nil {
+                        return err
+                }
+        }
+
+        return nil
+}
+
 func main() {
         // List of packages to install
-        packages := []string{"dnsmasq", "vim", "nfs-kernel-server", "debootstrap", "grub-efi-amd64-signed"}
+        packages := []string{"dnsmasq", "vim", "nfs-kernel-server", "debootstrap", "grub-efi-amd64-signed", "shim-signed"}
 
         // Call the InstallPackages function
         err := InstallPackages(packages)
@@ -71,7 +105,7 @@ func main() {
         }
 
         // List of directories to create
-        dirs := []string{"/srv/tftp", "/srv/nfs"} // Add as many directories as needed
+        dirs := []string{"/srv/tftp", "/srv/nfs", "/srv/tftp/grub"}
 
         // Call the createDirectories function to create the directories
         err = createDirectories(dirs)
@@ -97,18 +131,16 @@ tftp-root=/srv/tftp
         }
         defer confFile.Close()
 
-        // Write the content to the file
         _, err = confFile.WriteString(confContent)
         if err != nil {
                 log.Fatalf("Failed to write to file: %v", err)
         }
         fmt.Println("Configuration written to /etc/dnsmasq.d/00-header.conf")
 
-        // Example: Add host (manually or interactively)
+        // Collect user input for adding a DHCP host
         var mac, hostname, ip string
         scanner := bufio.NewScanner(os.Stdin)
 
-        // Collect user input
         fmt.Print("Enter MAC address: ")
         scanner.Scan()
         mac = scanner.Text()
@@ -121,9 +153,15 @@ tftp-root=/srv/tftp
         scanner.Scan()
         ip = scanner.Text()
 
-        // Add host to the file
+        // Call the addHost function to add the host entry
         err = addHost(mac, hostname, ip)
         if err != nil {
                 log.Fatalf("Error adding host: %v", err)
+        }
+
+        // Perform the file copy operations
+        err = copyFiles()
+        if err != nil {
+                log.Fatalf("Error copying files: %v", err)
         }
 }
