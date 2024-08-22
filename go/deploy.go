@@ -124,8 +124,8 @@ enable-tftp
 tftp-root=/srv/tftp
 `
 
-        // Open the file in append mode
-        confFile, err := os.OpenFile("/etc/dnsmasq.d/00-header.conf", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+        // Open the file and write the content
+        confFile, err := os.OpenFile("/etc/dnsmasq.d/00-header.conf", os.O_CREATE|os.O_WRONLY, 0644)
         if err != nil {
                 log.Fatalf("Failed to open file: %v", err)
         }
@@ -136,6 +136,37 @@ tftp-root=/srv/tftp
                 log.Fatalf("Failed to write to file: %v", err)
         }
         fmt.Println("Configuration written to /etc/dnsmasq.d/00-header.conf")
+
+        // Prepare the content for /srv/tftp/grub/grub.conf
+        confContent1 := `
+set timeout=5
+timeout_style=menu
+#debug=all
+set net_default_server=192.168.0.1
+
+menuentry 'DB overlay' {
+    linux /jammy/vmlinuz root=/dev/nfs nfsroot=192.168.0.1:/srv/nfs/db_overlay rw BOOTIF=01-$net_default_mac BOOTIP=$net_default_ip console=tty0 console=ttyS0,115200 earlyprintk=ttyS0,115200
+    initrd /jammy/initrd.img
+}
+
+menuentry 'Ubuntu 22.04' {
+    linux /jammy/vmlinuz root=/dev/nfs nfsroot=192.168.0.1:/srv/nfs/jammy rw BOOTIF=01-$net_default_mac BOOTIP=$net_default_ip console=tty0 console=ttyS1,115200 earlyprintk=ttyS1,115200
+    initrd /jammy/initrd.img
+}
+`
+
+        // Open the file and write the content
+        confFile, err = os.OpenFile("/srv/tftp/grub/grub.cfg", os.O_CREATE|os.O_WRONLY, 0644)
+        if err != nil {
+                log.Fatalf("Failed to open file: %v", err)
+        }
+        defer confFile.Close()
+
+        _, err = confFile.WriteString(confContent1)
+        if err != nil {
+                log.Fatalf("Failed to write to file: %v", err)
+        }
+        fmt.Println("Configuration written to /srv/tftp/grub/grub.cfg")
 
         // Collect user input for adding a DHCP host
         var mac, hostname, ip string
