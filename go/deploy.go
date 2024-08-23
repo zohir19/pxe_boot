@@ -217,4 +217,33 @@ menuentry 'Ubuntu 22.04' {
 	if err != nil {
 		log.Fatalf("Error running debootstrap: %v", err)
 	}
+        // Open the file and write the content
+	confFile, err := os.OpenFile("/etc/dnsmasq.d/00-header.conf", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", err)
+	}
+	defer confFile.Close()
+
+	_, err = confFile.WriteString(confContent)
+	if err != nil {
+		log.Fatalf("Failed to write to file: %v", err)
+	}
+	fmt.Println("Configuration written to /etc/dnsmasq.d/00-header.conf")
+
+	// Prepare the content for /srv/tftp/grub/grub.conf
+	confContent2 := `/srv/nfs/jammy *(rw,sync,no_subtree_check,no_root_squash)`
+        // Open the file and write the content
+	confFile, err = os.OpenFile("/etc/exports", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", err)
+	}
+	defer confFile.Close()
+
+	_, err = confFile.WriteString(confContent2)
+	if err != nil {
+		log.Fatalf("Failed to write to file: %v", err)
+	}
+	fmt.Println("Configuration written to /etc/exports")
+
+
 }
