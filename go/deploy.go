@@ -80,7 +80,7 @@ func copyFiles() error {
 	fileCopies := map[string]string{
 		"/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed": "/srv/tftp/grubnetx64.efi.signed",
 		"/usr/lib/shim/shimx64.efi.signed":                      "/srv/tftp/shimx64.efi.signed",
-		"/boot/grub/x86_64-efi":                                 "/srv/tftp/grub/",
+	//	"/boot/grub/x86_64-efi":                                 "/srv/tftp/grub/",
 	}
 
 	for src, dst := range fileCopies {
@@ -204,6 +204,10 @@ menuentry 'Ubuntu 22.04' {
 
 	// Perform the file copy operations
 	err = copyFiles()
+	if err != nil {
+		log.Fatalf("Error copying files: %v", err)
+	}
+        err = copyFile("/usr/lib/shim/shimx64.efi.signed","/srv/tftp/shimx64.efi.signed")
 	if err != nil {
 		log.Fatalf("Error copying files: %v", err)
 	}
