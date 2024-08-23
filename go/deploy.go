@@ -80,7 +80,6 @@ func copyFiles() error {
 	fileCopies := map[string]string{
 		"/usr/lib/grub/x86_64-efi-signed/grubnetx64.efi.signed": "/srv/tftp/grubnetx64.efi.signed",
 		"/usr/lib/shim/shimx64.efi.signed":                      "/srv/tftp/shimx64.efi.signed",
-	//	"/boot/grub/x86_64-efi":                                 "/srv/tftp/grub/",
 	}
 
 	for src, dst := range fileCopies {
@@ -90,6 +89,15 @@ func copyFiles() error {
 		}
 	}
 
+	return nil
+}
+func copyDirectory(src, dst string) error {
+	cmd := exec.Command("cp", "-r", src, dst)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to copy directory from %s to %s: %v\nOutput: %s", src, dst, err, output)
+	}
+	fmt.Printf("Successfully copied directory from %s to %s\n", src, dst)
 	return nil
 }
 
@@ -213,10 +221,10 @@ menuentry 'Ubuntu 22.04' {
 	}
 
 	// Run debootstrap command
-	err = runDebootstrap()
-	if err != nil {
-		log.Fatalf("Error running debootstrap: %v", err)
-	}
+//	err = runDebootstrap()
+//	if err != nil {
+//		log.Fatalf("Error running debootstrap: %v", err)
+//	}
         // Open the file and write the content
 	confFile, err := os.OpenFile("/etc/dnsmasq.d/00-header.conf", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
@@ -229,8 +237,7 @@ menuentry 'Ubuntu 22.04' {
 		log.Fatalf("Failed to write to file: %v", err)
 	}
 	fmt.Println("Configuration written to /etc/dnsmasq.d/00-header.conf")
-
-	// Prepare the content for /srv/tftp/grub/grub.conf
+        // Prepare the content for /srv/tftp/grub/grub.conf
 	confContent2 := `/srv/nfs/jammy *(rw,sync,no_subtree_check,no_root_squash)`
         // Open the file and write the content
 	confFile, err = os.OpenFile("/etc/exports", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -244,6 +251,11 @@ menuentry 'Ubuntu 22.04' {
 		log.Fatalf("Failed to write to file: %v", err)
 	}
 	fmt.Println("Configuration written to /etc/exports")
+        // Copy the directory /boot/grub/x86_64-efi/ to /srv/tftp/grub/
+	err = copyDirectory("/boot/grub/x86_64-efi/", "/srv/tftp/grub/")
+	if err != nil {
+		log.Fatalf("Error copying directory: %v", err)
+	}
 
 
 }
