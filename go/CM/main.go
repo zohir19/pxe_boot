@@ -72,14 +72,14 @@ func main() {
     // Run debootstrap command
     err = fileops.RunDebootstrap()
     if err != nil {
-        log.Fatalf("Error running debootstrap: %v", err)
-    }
+      log.Fatalf("Error running debootstrap: %v", err)
+   }
 
     err = fileops.CopyDirectory("/usr/lib/grub/x86_64-efi/", "/srv/tftp/grub/")
     if err != nil {
         log.Fatalf("Error copying directory: %v", err)
     }
-	// Restarting dnsmasq service
+    // Restarting dnsmasq service
     err = fileops.RestartService("dnsmasq")
     if err != nil {
         log.Fatalf("Error restarting service: %v", err)
@@ -105,3 +105,4 @@ func main() {
 
 
 }
+
