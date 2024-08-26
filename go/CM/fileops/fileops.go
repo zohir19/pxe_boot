@@ -73,3 +73,28 @@ func RunDebootstrap() error {
     fmt.Println("Debootstrap completed successfully!")
     return nil
 }
+// RestartService restarts a systemd service specified by the service name.
+func RestartService(serviceName string) error {
+	// Define the restart command
+	cmd := exec.Command("sudo", "systemctl", "restart", serviceName)
+	
+	// Capture output and errors
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to restart service %s: %v\nOutput: %s", serviceName, err, output)
+	}
+
+	fmt.Printf("Successfully restarted service: %s\n", serviceName)
+	return nil
+}
+// bindMount binds the source directory to the target directory using `mount --bind`
+func BindMount(source, target string) error {
+	cmd := exec.Command("mount", "--bind", source, target)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to bind mount %s to %s: %v\nOutput: %s", source, target, err, output)
+	}
+
+	fmt.Printf("Successfully bind-mounted %s to %s\n", source, target)
+	return nil
+}
