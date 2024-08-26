@@ -79,5 +79,29 @@ func main() {
     if err != nil {
         log.Fatalf("Error copying directory: %v", err)
     }
+	// Restarting dnsmasq service
+    err = fileops.RestartService("dnsmasq")
+    if err != nil {
+        log.Fatalf("Error restarting service: %v", err)
+    }
+    // Restarting nfs-kernel service
+    err = fileops.RestartService("nfs-kernel-server")
+    if err != nil {
+        log.Fatalf("Error restarting service: %v", err)
+    }
+    // Call bindMount for each directory pair
+    err = fileops.BindMount("/dev", "/srv/nfs/jammy/dev")
+    if err != nil {
+        fmt.Println(err)
+    }
+    err = fileops.BindMount("/proc", "/srv/nfs/jammy/proc")
+    if err != nil {
+        fmt.Println(err)
+    }
+    err = fileops.BindMount("/sys", "/srv/nfs/jammy/sys")
+    if err != nil {
+        fmt.Println(err)
+    }
+
 
 }
