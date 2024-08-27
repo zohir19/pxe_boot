@@ -119,10 +119,19 @@ deb http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe m
 deb http://archive.canonical.com/ubuntu/ jammy partner
 # deb-src http://archive.canonical.com/ubuntu/ jammy partner
 `
-err = config.WriteConfig("/srv/nfs/jammy/etc/apt/sources.list", sourceslist)
+	err = config.WriteConfig("/srv/nfs/jammy/etc/apt/sources.list", sourceslist)
     if err != nil {
         log.Fatalf("Error writing sources list config: %v", err)
     }
+	err = fileops.CopyFile("initial_setup.sh", "/srv/nfs/jammy/usr/local/bin")
+    if err != nil {
+        log.Fatalf("Error copying files: %v", err)
+    }
+    err = fileops.CopyFile("initial_setup.service", "/srv/nfs/jammy/etc/systemd/system")
+    if err != nil {
+        log.Fatalf("Error copying files: %v", err)
+    }
+
 
 }
 

@@ -1,0 +1,15 @@
+[Unit]
+Description=My Custom Script for Initial Setup
+After=network-online.target
+Before=getty.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/initial_setup.sh
+StandardOutput=journal+console
+StandardError=journal+console
+Type=oneshot
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
