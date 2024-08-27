@@ -98,3 +98,14 @@ func BindMount(source, target string) error {
 	fmt.Printf("Successfully bind-mounted %s to %s\n", source, target)
 	return nil
 }
+// RunInChroot runs the given command inside the chroot environment
+func RunInChroot(rootDir string, cmdName string, args ...string) error {
+	cmd := exec.Command("chroot", append([]string{rootDir, cmdName}, args...)...)
+	cmd.Stdout = cmd.Stderr
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to execute command '%s' in chroot: %v", cmdName, err)
+	}
+	fmt.Printf("Successfully executed: %s %v inside chroot\n", cmdName, args)
+	return nil
+}
