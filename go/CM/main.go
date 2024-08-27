@@ -131,7 +131,49 @@ deb http://archive.canonical.com/ubuntu/ jammy partner
     if err != nil {
         log.Fatalf("Error copying files: %v", err)
     }
+// chroot Part
+    rootDir := "/srv/nfs/jammy/"
+    // update 
+    err = fileops.RunInChroot(rootDir, "apt", "update")
+	if err != nil {
+		fmt.Println(err)
+	}
+    // Install packages inside chroot
+	packages := []string{
+		"linux-image-generic", "vim", "parted", "dosfstools", "rsync", "nfs-common", "grub-pc-lib", "grub-pc-bin",
+	}
+    for _, pkg := range packages {
+		err = runInChroot(rootDir, "apt", "install", "-y", pkg)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 
+	// Set password
+	err = runInChroot(rootDir, "passwd")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Enable initial setup service
+	err = runInChroot(rootDir, "systemctl", "enable", "initial_setup.service")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Exit the chroot environment
+	fmt.Println("All commands executed in chroot environment.")
+    
+
+
+    err = fileops.CopyFile("/srv/nfs/jammy/boot/vmlinuz", "/srv/tftp/jammy/vmlinuz")
+    if err != nil {
+        log.Fatalf("Error copying files: %v", err)
+    }
+    err = fileops.CopyFile("/srv/nfs/jammy/boot/initrd.img", "/srv/tftp/jammy/initrd.img")
+    if err != nil {
+        log.Fatalf("Error copying files: %v", err)
+    }
 
 }
 
