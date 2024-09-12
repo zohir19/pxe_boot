@@ -27,22 +27,48 @@ func main() {
     if err != nil {
         log.Fatalf("Error creating directories: %v", err)
     }
+    var ip_range_start, ip_range_end, int_dhcp, server_ip string
+	scanner := bufio.NewScanner(os.Stdin)
 
-    // Write configuration files
-    dnsmasqConfig := `
-    port=0
-    dhcp-hostsfile=/etc/dnsmasq.d/01-test.hosts
-    interface=enp107s0
-    dhcp-range=192.168.0.100,192.168.0.150,12h
-    dhcp-boot=grubnetx64.efi.signed,linuxhint-s20,192.168.0.1
-    enable-tftp
-    tftp-root=/srv/tftp
-    `
-    err = config.WriteConfig("/etc/dnsmasq.d/00-header.conf", dnsmasqConfig)
-    if err != nil {
-        log.Fatalf("Error writing DNSMASQ config: %v", err)
-    }
+	// Get DHCP range start
+	fmt.Print("Enter DHCP range start: ")
+	scanner.Scan()
+	ip_range_start = scanner.Text()
 
+	// Get DHCP range end
+	fmt.Print("Enter DHCP range end: ")
+	scanner.Scan()
+	ip_range_end = scanner.Text()
+    fmt.Print("Enter DHCP interface: ")
+	scanner.Scan()
+	int_dhcp = scanner.Text()
+    fmt.Print("Enter server IP: ")
+	scanner.Scan()
+	server_ip = scanner.Text()
+
+	// Write configuration files dynamically using the user input
+	dnsmasqConfig := fmt.Sprintf(`
+port=0
+dhcp-hostsfile=/etc/dnsmasq.d/01-test.hosts
+interface=enp107s0
+dhcp-range=%s,%s,12h
+dhcp-boot=grubnetx64.efi.signed,linuxhint-s20,192.168.0.1
+enable-tftp
+tftp-root=/srv/tftp
+`, ip_range_start, ip_range_end)
+
+	// Print or save the generated config
+	fmt.Println("Generated dnsmasq config:")
+	fmt.Println(dnsmasqConfig)
+
+	// Optionally, you can write it to a file
+	err := os.WriteFile("/etc/dnsmasq.d/00-header.conf", []byte(dnsmasqConfig), 0644)
+	if err != nil {
+		fmt.Printf("Failed to write to file: %v\n", err)
+	} else {
+		fmt.Println("Configuration written to /etc/dnsmasq.d/00-header.conf")
+	}
+}
     // Collect user input and add DHCP host entry
     var mac, hostname, ip string
     scanner := bufio.NewScanner(os.Stdin)
