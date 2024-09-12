@@ -139,33 +139,30 @@ deb http://archive.canonical.com/ubuntu/ jammy partner
 		fmt.Println(err)
 	}
     // Install packages inside chroot
-	packages := []string{
+	packages = []string{
 		"linux-image-generic", "vim", "parted", "dosfstools", "rsync", "nfs-common", "grub-pc-lib", "grub-pc-bin",
 	}
     for _, pkg := range packages {
-		err = runInChroot(rootDir, "apt", "install", "-y", pkg)
+		err = fileops.RunInChroot(rootDir, "apt", "install", "-y", pkg)
 		if err != nil {
 			fmt.Println(err)
 		}
 	}
 
 	// Set password
-	err = runInChroot(rootDir, "passwd")
+	err = fileops.RunInChroot(rootDir, "passwd")
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	// Enable initial setup service
-	err = runInChroot(rootDir, "systemctl", "enable", "initial_setup.service")
+	err = fileops.RunInChroot(rootDir, "systemctl", "enable", "initial_setup.service")
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	// Exit the chroot environment
 	fmt.Println("All commands executed in chroot environment.")
-    
-
-
     err = fileops.CopyFile("/srv/nfs/jammy/boot/vmlinuz", "/srv/tftp/jammy/vmlinuz")
     if err != nil {
         log.Fatalf("Error copying files: %v", err)
