@@ -1,5 +1,5 @@
 apt install apache2 php php-cgi libapache2-mod-php php-mbstring php-common php-pear -y
-apt install slapd ldap-utils -y
+apt install slapd ldap-utils -y --> will ask for admin pass
 apt -y install ldap-account-manager
 
 
