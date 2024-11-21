@@ -1,5 +1,5 @@
 # Connecting to AD
-This Document shows how you can connect to AD and use it to authentication users into your system
+This Document shows how you can connect to AD and use it to authenticate users into your system
 
 
 ## Ubuntu
@@ -14,9 +14,11 @@ hostnamectl set-hostname fullname
 systemctl disable systemd-resolved.service
 systemctl stop systemd-resolved.service
 ```
+Edit the /etc/resolv.conf
 ``` bash 
-vim /etc/resolv.conf
-
+nameserver <AD IP >
+search <AD Domain >
+```
 ### Join the AD
 ``` bash 
 ping <realm>
