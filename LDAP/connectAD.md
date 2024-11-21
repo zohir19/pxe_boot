@@ -71,3 +71,14 @@ ldap_id_mapping = True
 access_provider = simple
 simple_allow_groups = IT-admins  # Only allow this group users
 ```
+### Restart the service
+``` bash
+systemctl restart sssd
+systemctl status sssd
+```
+if you encountered problems with sssd status when it comes to dynamic dns add these lines if not ignore
+``` bash
+dyndns_refresh_interval = 43200
+dyndns_update_ptr = false
+dyndns_ttl = 3600
+```
