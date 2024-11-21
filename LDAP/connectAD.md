@@ -87,3 +87,8 @@ dyndns_ttl = 3600
 login <username>
 ```
 If it says "Unable to create and initialize directory" just try again and it will work the directory is still being initialized.
+
+### Important Notes
+1. The system needs to be able to resolve the AD.
+1. The AD and the local machine needs to be syncrounized if they are not you need to install ntp and the AD the NTP server.
+1. To be able to login with ssh you need to uncomment 'PasswordAuthentication'
