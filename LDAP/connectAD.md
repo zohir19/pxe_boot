@@ -1,3 +1,7 @@
+# Connecting to AD
+This Document shows how you can connect to AD and use it to authentication users into your system
+
+
 ## Ubuntu
 ### Install Packages
 ``` bash
@@ -9,13 +13,15 @@ apt install realmd sssd sssd-tools adcli samba-common-bin packagekit krb5-user l
 hostnamectl set-hostname fullname 
 systemctl disable systemd-resolved.service
 systemctl stop systemd-resolved.service
-vim /etc/resolv.conf
 ```
+``` bash 
+vim /etc/resolv.conf
+
 ### Join the AD
 ``` bash 
 ping <realm>
 realm discover -v <realm>
-kinit Administrator@HPCME.COM
+kinit Administrator@<realm>
 realm join -v -U <user> <realm>
 ```
 ### User configs
