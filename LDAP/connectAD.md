@@ -49,7 +49,7 @@ pam-auth-update
 
 ```
 
-modify the /etc/sssd/sssd.conf
+Modify the /etc/sssd/sssd.conf
 
 ``` bash
 [sssd]
@@ -76,9 +76,14 @@ simple_allow_groups = IT-admins  # Only allow this group users
 systemctl restart sssd
 systemctl status sssd
 ```
-if you encountered problems with sssd status when it comes to dynamic dns add these lines if not ignore
+If you encountered problems with sssd status when it comes to dynamic dns add these lines if not ignore
 ``` bash
 dyndns_refresh_interval = 43200
 dyndns_update_ptr = false
 dyndns_ttl = 3600
 ```
+### Log in with the username
+``` bash
+login username
+```
+If it says "Unable to create and initialize directory" just try again and it will work the directory is still being initialized.
