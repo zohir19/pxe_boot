@@ -84,6 +84,6 @@ dyndns_ttl = 3600
 ```
 ### Log in with the username
 ``` bash
-login username
+login <username>
 ```
 If it says "Unable to create and initialize directory" just try again and it will work the directory is still being initialized.
