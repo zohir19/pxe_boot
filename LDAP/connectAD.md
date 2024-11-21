@@ -10,7 +10,7 @@
 This Document shows how you can connect to AD and use it to authenticate users into your system
 
 
-## Ubuntu
+## Ubuntu & Base-view on ubuntu
 ### Install Packages
 ``` bash
 apt update -y
