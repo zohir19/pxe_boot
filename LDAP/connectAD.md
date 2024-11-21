@@ -94,5 +94,5 @@ Modify /etc/ssh/sshd_config and uncomment the following:
 PasswordAuthentication yes
 ```
 ### Important Notes
-1. The system needs to be able to resolve the AD.
+1. The local machine needs to be able to resolve the AD.
 1. The AD and the local machine needs to be syncronized if they are not you need to install ntp and the AD the NTP server.
