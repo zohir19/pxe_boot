@@ -18,7 +18,8 @@ apt install realmd sssd sssd-tools adcli samba-common-bin packagekit krb5-user l
 ```
 ### DNS config
 ``` bash
-hostnamectl set-hostname fullname 
+hostnamectl set-hostname <fullname>
+
 bash -c "cat >> /etc/resolvconf/resolv.conf.d/head" << EOF
 nameserver <dns IP>
 search <domain name>
