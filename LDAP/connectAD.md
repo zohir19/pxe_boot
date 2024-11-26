@@ -14,13 +14,15 @@ This Document shows how you can connect to AD and use it to authenticate users i
 ### Install Packages
 ``` bash
 apt update -y
-apt install realmd sssd sssd-tools adcli samba-common-bin packagekit krb5-user libpam-sss libnss-sss oddjob oddjob-mkhomedir
+apt install realmd sssd sssd-tools adcli samba-common-bin packagekit krb5-user libpam-sss libnss-sss oddjob oddjob-mkhomedir resolvconf
 ```
 ### DNS config
 ``` bash
 hostnamectl set-hostname fullname 
-systemctl disable systemd-resolved.service
-systemctl stop systemd-resolved.service
+bash -c "cat >> /etc/resolvconf/resolv.conf.d/head" << EOF
+nameserver <dns IP>
+search <domain name>
+EOF
 ```
 Edit the /etc/resolv.conf
 ``` bash 
