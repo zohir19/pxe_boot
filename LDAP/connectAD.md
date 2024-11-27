@@ -20,14 +20,13 @@ apt install realmd sssd sssd-tools adcli samba-common-bin packagekit krb5-user l
 ``` bash
 hostnamectl set-hostname <fullname>
 
-modify the /etc/resolv.conf
-and make it permanent
 ```
 Edit the /etc/resolv.conf
 ``` bash 
 nameserver <AD IP >
 search <AD Domain >
 ```
+Make the changes persistent
 ### Join the AD
 ``` bash 
 ping <realm>
