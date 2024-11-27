@@ -14,16 +14,14 @@ This Document shows how you can connect to AD and use it to authenticate users i
 ### Install Packages
 ``` bash
 apt update -y
-apt install realmd sssd sssd-tools adcli samba-common-bin packagekit krb5-user libpam-sss libnss-sss oddjob oddjob-mkhomedir resolvconf
+apt install realmd sssd sssd-tools adcli samba-common-bin packagekit krb5-user libpam-sss libnss-sss oddjob oddjob-mkhomedir
 ```
 ### DNS config
 ``` bash
 hostnamectl set-hostname <fullname>
 
-bash -c "cat >> /etc/resolvconf/resolv.conf.d/head" << EOF
-nameserver <dns IP>
-search <domain name>
-EOF
+modify the /etc/resolv.conf
+and make it permanent
 ```
 Edit the /etc/resolv.conf
 ``` bash 
@@ -45,7 +43,7 @@ Default: yes
 Priority: 900
 Session-Type: Additional
 Session:
- required pam_mkhomedir.so umask=0022 skel=/et/skel
+ required pam_mkhomedir.so umask=0022 skel=/etc/skel
 EOF
 
 pam-auth-update
