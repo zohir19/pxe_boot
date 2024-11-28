@@ -68,6 +68,8 @@ fallback_homedir = /home/%u
 ad_domain = hpcme.com
 use_fully_qualified_names = False
 ldap_id_mapping = True
+ldap_idmap_range_min = 2000  #To limit the user assigned UID
+ldap_idmap_range_max = 1000000
 access_provider = simple
 simple_allow_groups = IT-admins  # Only allow this group users
 ```
