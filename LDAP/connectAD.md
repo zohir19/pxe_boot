@@ -24,15 +24,15 @@ hostnamectl set-hostname <fullname>
 Edit the /etc/resolv.conf
 ``` bash 
 nameserver <AD IP >
-search <AD Domain >
+search hpcme.com
 ```
 Make the changes persistent
 ### Join the AD
 ``` bash 
-ping <realm>
-realm discover -v <realm>
-kinit Administrator@<realm>
-realm join -v -U <user> <realm>
+ping hpcme.com
+realm discover -v hpcme.com
+kinit Administrator@HPCME.COM
+realm join -v -U <user> hpcme.com
 ```
 ### User configs
 ``` bash
@@ -95,6 +95,61 @@ Modify /etc/ssh/sshd_config and uncomment the following:
 ```
 PasswordAuthentication yes
 ```
+
+## RHEL
+
+### Install Packages
+``` bash
+dnf update -y
+dnf install -y sssd sssd-tools realmd adcli krb5-workstation oddjob oddjob-mkhomedir
+```
+### DNS config
+edit /etc/hosts
+``` bash
+< AD IP>  hpcme.com
+
+```
+Edit the /etc/resolv.conf
+``` bash 
+nameserver <AD IP >
+search hpcme.com
+```
+After this you should be able to :
+``` bash
+ping hpcme.com 
+```
+## Sync the two servers
+``` bash
+dnf install -y chrony
+systemctl enable --now chronyd
+chronyc sources
+timedatectl set-ntp true
+```
+## Modify krb config
+vim /etc/krb5.conf
+``` bash
+[libdefaults]
+  default_realm = HPCME.COM
+  dns_lookup_realm = false
+  dns_lookup_kdc = true
+
+[realms]
+  HPCME.COM = {
+    kdc = <AD IP>
+    admin_server = <AD IP>
+  }
+
+[domain_realm]
+  .hpcme.com = HPCME.COM
+  hpcme.com = HPCME.COM
+```
+Test Kerberos:
+``` bash
+kinit Administrator@HPCME.COM
+klist
+```
+## Join the realm
+
 ### Important Notes
 1. The local machine needs to be able to resolve the AD.
 1. The AD and the local machine needs to be syncronized if they are not you need to install ntp and the AD the NTP server.
