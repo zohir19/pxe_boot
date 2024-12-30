@@ -70,6 +70,7 @@ use_fully_qualified_names = False
 ldap_id_mapping = True
 ldap_idmap_range_min = 2000  #To limit the user assigned UID
 ldap_idmap_range_max = 1000000
+ldap_idmap_autorid_compat = True
 access_provider = simple
 simple_allow_groups = IT-admins  # Only allow this group users
 ```
@@ -149,6 +150,37 @@ kinit Administrator@HPCME.COM
 klist
 ```
 ## Join the realm
+realm join -v -U <user> hpcme.com
+Modify the /etc/sssd/sssd.conf
+
+``` bash
+[sssd]
+domains = hpcme.com
+config_file_version = 2
+services = nss, pam
+
+[domain/hpcme.com]
+default_shell = /bin/bash
+krb5_store_password_if_offline = True
+cache_credentials = True
+krb5_realm = HPCME.COM
+realmd_tags = manages-system joined-with-adcli
+id_provider = ad
+fallback_homedir = /home/%u
+ad_domain = hpcme.com
+use_fully_qualified_names = False
+ldap_id_mapping = True
+ldap_idmap_range_min = 2000  #To limit the user assigned UID
+ldap_idmap_range_max = 1000000
+ldap_idmap_autorid_compat = True
+access_provider = simple
+simple_allow_groups = IT-admins  # Only allow this group users
+```
+### Restart the service
+``` bash
+systemctl restart sssd
+systemctl status sssd
+```
 
 ### Important Notes
 1. The local machine needs to be able to resolve the AD.
