@@ -119,14 +119,14 @@ After this you should be able to :
 ``` bash
 ping hpcme.com 
 ```
-## Sync the two servers
+### Sync the two servers
 ``` bash
 dnf install -y chrony
 systemctl enable --now chronyd
 chronyc sources
 timedatectl set-ntp true
 ```
-## Modify krb config
+### Modify krb config
 vim /etc/krb5.conf
 ``` bash
 [libdefaults]
@@ -149,7 +149,7 @@ Test Kerberos:
 kinit Administrator@HPCME.COM
 klist
 ```
-## Join the realm
+### Join the realm
 realm join -v -U <user> hpcme.com
 Modify the /etc/sssd/sssd.conf
 
@@ -181,7 +181,17 @@ simple_allow_groups = IT-admins  # Only allow this group users
 systemctl restart sssd
 systemctl status sssd
 ```
+### Log in with the username
+``` bash
+login <username>
+```
+If you see this error "Unable to create and initialize directory" just try again and it will work the directory is still being initialized.
+### Enable SSH login
 
+Modify /etc/ssh/sshd_config and uncomment the following:
+```
+PasswordAuthentication yes
+```
 ### Important Notes
 1. The local machine needs to be able to resolve the AD.
 1. The AD and the local machine needs to be syncronized if they are not you need to install ntp and the AD the NTP server.
