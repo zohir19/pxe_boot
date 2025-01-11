@@ -176,6 +176,13 @@ ldap_idmap_autorid_compat = True
 access_provider = simple
 simple_allow_groups = IT-admins  # Only allow this group users
 ```
+it's always recommended to stop sssd before any modifications
+``` bash
+systemctl stop sssd
+rm -rf /var/lib/sss/db/*
+rm -rf /var/lib/sss/mc/*
+sss_cache -E
+```
 ### Restart the service
 ``` bash
 systemctl restart sssd
