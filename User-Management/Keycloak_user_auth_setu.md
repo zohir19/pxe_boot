@@ -239,3 +239,5 @@ If a user is deleted from Bright, their home directory ownership is changed to `
 - If any operation fails, appropriate error messages are displayed.
 
 In summary, the script automates the process of synchronizing users between Keycloak and Bright, including adding groups and managing user deletions.
+
+The script is called import_users.sh and it is in the same directory as this documentation 
