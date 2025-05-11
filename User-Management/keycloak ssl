@@ -1,0 +1,290 @@
+# Keycloak Production Setup Guide with HTTPS Security
+
+## Overview
+This document outlines the step-by-step process for deploying Keycloak in a production environment with PostgreSQL as the database backend and proper HTTPS security. The goal is to create a secure, reliable identity and access management solution.
+
+## Prerequisites
+- Linux server (this guide uses a system with DNF package manager)
+- Root or sudo access
+- Basic knowledge of Linux commands
+- Network access to the server (IP: 192.168.56.100 in this example)
+
+## 1. PostgreSQL Database Setup
+
+PostgreSQL will store all Keycloak data for persistence across restarts.
+
+```bash
+# Install PostgreSQL server and additional components
+dnf install postgresql-server postgresql-contrib
+
+# Initialize the PostgreSQL database cluster
+postgresql-setup --initdb
+
+# Enable PostgreSQL to start automatically on system boot
+systemctl enable postgresql
+
+# Start the PostgreSQL service
+systemctl start postgresql
+```
+
+### Create Database and User for Keycloak
+
+```bash
+# Switch to the PostgreSQL system user
+sudo -i -u postgres
+
+# Create a dedicated database for Keycloak
+createdb keycloak
+
+# Create a dedicated user with a secure password
+# IMPORTANT: Change 'init12' to a strong password in production
+psql -c "CREATE USER keycloak WITH ENCRYPTED PASSWORD 'init12';"
+
+# Grant the Keycloak user full access to the Keycloak database
+psql -c "GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;"
+
+# Grant schema permissions to the Keycloak user
+psql -d keycloak -c "GRANT ALL ON SCHEMA public TO keycloak;"
+
+# Exit from the postgres user shell
+exit
+```
+
+## 2. Keycloak Installation and Configuration
+
+### Build Keycloak with PostgreSQL Support
+
+```bash
+# Navigate to the Keycloak directory
+cd keycloak
+
+# Build Keycloak with PostgreSQL database support
+bin/kc.sh build --db=postgres
+```
+
+### Configure HTTPS (Initial Setup with Self-Signed Certificate)
+
+First, we'll create a temporary keystore for initial testing:
+
+```bash
+# Generate a keystore for HTTPS connections
+keytool -genkeypair -alias server -keyalg RSA -keysize 2048 -validity 365 \
+  -keystore conf/server.keystore -storepass password -keypass password \
+  -dname "CN=localhost"
+```
+
+### Configure Keycloak
+
+```bash
+# Edit the Keycloak configuration file
+vi conf/keycloak.conf
+```
+
+Add these essential configuration parameters:
+
+```properties
+# Database Configuration
+db=postgres
+db-username=keycloak
+db-password=init12          # Use your secure password from earlier
+db-url=jdbc:postgresql://localhost:5432/keycloak
+
+# Network Configuration
+# For initial setup, use localhost
+hostname=localhost
+
+# HTTPS Configuration (temporary self-signed certificate)
+https-key-store-file=conf/server.keystore
+https-key-store-password=password
+```
+
+### Initial Startup with Admin User Creation
+
+```bash
+# Set environment variables for the initial admin account
+export KC_BOOTSTRAP_ADMIN_USERNAME=admin
+export KC_BOOTSTRAP_ADMIN_PASSWORD=secure_admin_password  # Use a strong password here
+
+# Start Keycloak in production mode
+bin/kc.sh start
+```
+
+At this point, you should be able to access Keycloak at https://localhost:8443/ with the admin credentials you specified. This confirms that the basic setup is working.
+
+## 3. Production-Ready SSL Certificate Setup
+
+For a production environment, we'll create a proper SSL certificate:
+
+### Create a Custom Certificate Authority (CA)
+
+```bash
+# Install the certbot utility (useful for certificate management)
+dnf install certbot
+
+# Create directory structure for our custom CA
+mkdir -p /root/custom-ca/root-ca
+cd /root/custom-ca/root-ca
+
+# Generate a private key for your root CA (4096 bits for strong security)
+openssl genrsa -out rootCA.key 4096
+
+# Create a root certificate (valid for 10 years)
+# You'll be prompted for information - provide appropriate details for your organization
+openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 3650 -out rootCA.crt
+```
+
+### Create Keycloak Server Certificate
+
+```bash
+# Create directory for Keycloak-specific certificates
+mkdir -p /root/custom-ca/keycloak
+cd /root/custom-ca/keycloak
+
+# Generate Keycloak server private key
+openssl genrsa -out keycloak.key 2048
+
+# Create a certificate signing request (CSR)
+# You'll be prompted for information - provide appropriate details
+openssl req -new -key keycloak.key -out keycloak.csr
+
+# Create a configuration file to include the server's IP address in the certificate
+# This is crucial for clients to verify the server identity
+echo "subjectAltName=IP:192.168.56.100" > extfile.cnf
+
+# Sign the certificate with your CA (valid for 1 year)
+openssl x509 -req -in keycloak.csr -CA /root/custom-ca/root-ca/rootCA.crt \
+  -CAkey /root/custom-ca/root-ca/rootCA.key -CAcreateserial \
+  -out keycloak.crt -days 365 -sha256 -extfile extfile.cnf
+```
+
+### Update Keycloak to Use the New Certificate
+
+```bash
+# Edit the Keycloak configuration file
+vi /root/keycloak-26.1.2/conf/keycloak.conf
+```
+
+Replace the temporary HTTPS settings with:
+
+```properties
+# Updated HTTPS Configuration with proper certificates
+https-certificate-file=/root/custom-ca/keycloak/keycloak.crt
+https-certificate-key-file=/root/custom-ca/keycloak/keycloak.key
+
+# Also update the hostname to use the server's actual IP
+hostname=192.168.56.100
+```
+
+### Trust the Certificate on Client Systems
+
+```bash
+# Display the root CA certificate to distribute to clients
+cat /root/custom-ca/root-ca/rootCA.crt
+# Copy this output and distribute it to client systems
+
+# Also add the CA to the local system's trusted certificates (if needed)
+vim /etc/pki/ca-trust/source/anchors/keycloak-ca.crt
+# Paste the rootCA.crt content here
+
+# Update the system's trust store
+update-ca-trust
+```
+
+## 4. Configure Keycloak as a System Service
+
+Setting up Keycloak as a service ensures it starts automatically and is properly managed by the system.
+
+### Create Service User (Security Best Practice)
+
+```bash
+# Create a dedicated group for Keycloak
+sudo groupadd -r keycloak
+
+# Create a dedicated user with no login shell for security
+sudo useradd -r -g keycloak -d /root/keycloak-26.1.2 -s /sbin/nologin keycloak
+
+# Set appropriate permissions
+sudo chown -R keycloak:keycloak /root/keycloak-26.1.2
+```
+
+### Create Systemd Service
+
+```bash
+# Create a systemd service file
+sudo vi /etc/systemd/system/keycloak.service
+```
+
+Add this configuration:
+
+```ini
+[Unit]
+Description=Keycloak Server - Identity and Access Management
+After=network.target postgresql.service
+Wants=network.target
+
+[Service]
+Type=simple
+# Note: In production, consider running as the keycloak user instead of root
+User=root
+Group=root
+WorkingDirectory=/root/keycloak-26.1.2
+ExecStart=/bin/bash /root/keycloak-26.1.2/bin/kc.sh start
+
+# Environment variables for configuration
+Environment="KC_DB=postgres"
+Environment="KC_DB_URL=jdbc:postgresql://localhost:5432/keycloak"
+Environment="KC_DB_USERNAME=keycloak"
+Environment="KC_DB_PASSWORD=init12"
+Environment="KC_HOSTNAME=192.168.56.100"
+
+# Timeouts and restart policy
+TimeoutStartSec=600
+TimeoutStopSec=600
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Enable and Start the Service
+
+```bash
+# Reload systemd to recognize the new service
+sudo systemctl daemon-reload
+
+# Enable the service to start on boot
+sudo systemctl enable keycloak
+
+# Start the Keycloak service
+sudo systemctl start keycloak
+
+# Verify the service status
+sudo systemctl status keycloak
+```
+
+## 5. Verification and Next Steps
+
+### Verify HTTPS Connection
+
+Access Keycloak at `https://192.168.56.100:8443/` from a client that has the root CA certificate installed. You should see:
+
+1. A secure connection (padlock icon in the browser)
+2. The Keycloak login page
+3. Ability to log in with the admin credentials
+
+### Security Recommendations
+
+1. **Passwords**: Replace all example passwords with strong, unique passwords
+2. **Firewall**: Configure your firewall to only allow access to port 8443
+3. **Regular Updates**: Set up a process for regular certificate renewal
+4. **Monitoring**: Implement monitoring for both PostgreSQL and Keycloak services
+5. **Backups**: Configure regular database backups
+
+## Troubleshooting
+
+If you experience issues:
+
+1. Check service status: `systemctl status keycloak`
+2. View logs: `journalctl -u keycloak -f`
+3. Verify database connectivity: `sudo -u postgres psql -d keycloak -c "SELECT 1;"`
+4. Ensure certificates are valid: `openssl verify -CAfile /root/custom-ca/root-ca/rootCA.crt /root/custom-ca/keycloak/keycloak.crt`
